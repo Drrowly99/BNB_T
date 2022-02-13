@@ -15,12 +15,6 @@ const sender = '0x1c8b395A6fE651510C88880d27Db90C7cc4BC7DF'
 
 //initiate smart contract call
 
-// Ether.js asset
-const { ethers } = require("ethers");
-const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/'+process.env.INFURA_ID);
-
-
-
 const contractAddress = '0x75763f42a48fb4c1f5898eecf487d92F7E61F618'  // {{{{{{{{{{{{{GHETO TOKEN (GTO) CONTRACT ADDRESS}}}}}}}}}}}
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_owner","type":"address"},{"indexed":true,"internalType":"address","name":"_spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"_value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_from","type":"address"},{"indexed":true,"internalType":"address","name":"_to","type":"address"},{"indexed":false,"internalType":"uint256","name":"_value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_spender","type":"address"},{"internalType":"uint256","name":"_value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_from","type":"address"},{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
     
@@ -131,7 +125,7 @@ router.get('/call-pastTransfer', (req, res) =>{
 // TO THE PUBLIC ADDRESS
 // SENDEY_KEY IS YOUR PRIVATE KEY STORED IN YOUR .ENV FILE
 router.get('/call-private', (req, res) =>{
-    var acc = web3.eth.accounts.privateKeyToAccount(process.env.THIRD_KEY)
+    var acc = web3.eth.accounts.privateKeyToAccount(process.env.SENDER_KEY)
         res.send(acc)
     
 })
@@ -196,12 +190,19 @@ router.get('/call-transfer', (req, res) =>{
 
     web3.eth.sendTransaction({
         from: third,
-        to: sender,
-        value: '1000000000000000'
+        to: third,
+        value: '1000',
+        gas: 5000000,
+        gasPrice: 18e9,
+        
+    }, function(err, transactionHash){
+        if(err){
+            console.log(err)
+        }else{
+            res.send(transactionHash)
+        }
     })
-    .then(function(receipt){
-        console.log('ok')
-    });
+     
     // web3.eth.getTransactionCount(receiver, (err, txCount)=>{
 
     //     //BUILDING THE TRANSACTION
